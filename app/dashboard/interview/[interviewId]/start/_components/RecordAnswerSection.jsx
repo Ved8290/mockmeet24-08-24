@@ -1,7 +1,4 @@
-"use client"
-import React, { useEffect, useState } from 'react'
-import Image from 'next/image'
-import Webcam from "react-webcam";
+import React, { useEffect, useState } from 'react';
 import { Button } from '../../../../../../components/ui/button';
 import useSpeechToText from 'react-hook-speech-to-text';
 import { Mic } from 'lucide-react';
@@ -11,133 +8,134 @@ import { UserAnswer } from '../../../../../../utils/schema';
 import moment from 'moment';
 import { useUser } from '@clerk/nextjs';
 import { db } from '../../../../../../utils/db';
-import mockInterviewQuestion from '../page'
-import activeQuestionIndex from '../page'
-import interviewData from '../page'
-import questionwithindex from '../page'
 import { Textarea } from '../../../../../../components/ui/textarea';
 import { Label } from '../../../../../../components/ui/label';
+import { XCircle } from 'lucide-react';
 
+function RecordAnswerSection({ mockInterviewQuestion, activeQuestionIndex, interviewData }) {
+  const [userAnswer, setUserAnswer] = useState('');
+  const { user } = useUser();
+  const [loading, setLoading] = useState(false);
 
+  const {
+    error,
+    interimResult,
+    isRecording,
+    results,
+    startSpeechToText,
+    stopSpeechToText,
+    setResults
+  } = useSpeechToText({
+    continuous: true,
+    useLegacyResults: false
+  });
 
-function RecordAnswerSection({mockInterviewQuestion,activeQuestionIndex , interviewData , questionwithindex , prev}) {
-    const [userAnswer,setUserAnswer]=useState();
-    const {user}=useUser();
-    const [loading,setLoading]=useState(false)
-   
-    const {
-        error,
-        interimResult,
-        isRecording,
-        results,
-        startSpeechToText,
-        stopSpeechToText,
-        setResults
+  useEffect(() => {
+    if (results.length > 0) {
+      setUserAnswer(results.map(result => result.transcript).join(' '));
+    }
+  }, [results]);
+
+  const startStopRecording = () => {
+    if (isRecording) {
+      stopSpeechToText();
+    } else {
+      setUserAnswer('');
+      setResults([]);
+      startSpeechToText();
+    }
+  };
+
+  const updateUserAnswer = async () => {
+    setLoading(true);
+
+    const questionNumber = activeQuestionIndex + 1;
+    const feedbackPrompt = `Question ${questionNumber}: ${mockInterviewQuestion[activeQuestionIndex]?.question}, User Answer: ${userAnswer}, Depend on question and user answer for the given interview question, please give us a rating for the answer and feedback as an area of improvement if any, in just 3 to 5 lines to improve it in JSON format. With rating field and feedback field: (Please give all text inside JSON form only. Wrap all things in {[]} only)`;
+
+    try {
+      const result = await chatSession.sendMessage(feedbackPrompt);
+
+      // Strip out any unnecessary code blocks or formatting
+      const rawJson = result.response.text().replace(/```json|```/g, '').trim();
       
-      } = useSpeechToText({
-        continuous: true,
-        useLegacyResults: false
+      // Parse the JSON response
+      const jsonFeedbackResp = JSON.parse(rawJson);
+
+      await db.insert(UserAnswer).values({
+        mockIDRef: interviewData?.mockID,
+        question: mockInterviewQuestion[activeQuestionIndex]?.question,
+        correctAns: mockInterviewQuestion[activeQuestionIndex]?.answer,
+        userAns: userAnswer,
+        feedback: jsonFeedbackResp?.feedback || 'No feedback provided',
+        rating: jsonFeedbackResp?.rating || 0,
+        userEmail: user?.primaryEmailAddress?.emailAddress,
+        createdAt: moment().format('DD-MM-YYYY')
       });
 
-      useEffect(()=>{
-        results.map((result)=>(
-            setUserAnswer(prevAns=>prevAns+result?.transcript)
-        ))
-
-      },[results])
-
-      // useEffect(()=>{
-       
-      //   UpadateUserAnswer();
-          
-      // },[userAnswer])
-
-      const StartStopRecording=async()=>{
-        if(isRecording){
-          
-          stopSpeechToText()
-         
-        }else{
-          startSpeechToText()
-        }
-
-      }
-
-    const UpadateUserAnswer=async()=>{
-      console.log(userAnswer);
-      setLoading(true);
-    
-      const feedbackPromt="Question :"+mockInterviewQuestion[activeQuestionIndex]?.question+" , User Answer :"+userAnswer+" ,Depend onquestion and user answer for  given interview question "+
-      " please give us rating for answer and feedback as area of improment if any "+
-       " in just 3 to 5 lines to improve it in JSON format. with rating field and feedback filed :(please give all text inside json form only . wrrap all text in json form only)";
-
-       console.log(feedbackPromt);
-       console.log("question"+questionwithindex);
-
-      const result=await chatSession.sendMessage(feedbackPromt);
-     
-
-      const mockJsonResp=(result.response.text()).replace('```json','').replace('```','')
-      console.log(mockJsonResp)
-      const JsonFeedbackResp=JSON.parse(mockJsonResp);
-      const feedbackvar=JsonFeedbackResp?.feedback;
-      console.log(feedbackvar);
-
-      const resp=await db.insert(UserAnswer)
-      .values({
-        mockIDRef:interviewData?.mockID,
-        question:mockInterviewQuestion[activeQuestionIndex]?.question,
-        correctAns:mockInterviewQuestion[activeQuestionIndex]?.answer,
-        userAns:userAnswer,
-        feedback:JsonFeedbackResp?.feedback,
-        rating:JsonFeedbackResp?.rating,
-        userEmail:user?.primaryEmailAddress?.emailAddress,
-        creadtedAt:moment().format('DD-MM-YYYY')
-      })
-
-      if(resp){
-        toast('User Answer recorded Successfully')
-        setUserAnswer('');
-        setResults([]);
-      }
+      toast(`User Answer for Question #${questionNumber} recorded successfully`);
+    } catch (err) {
+      console.error('Error saving user answer:', err);
+      toast.error('Failed to save user answer. Please try again.');
+    } finally {
+      setUserAnswer('');
       setResults([]);
-      
       setLoading(false);
-    } 
+    }
+  };
 
-  return(
-    <div className='flex item-center justify-center flex-col'>
-    <div className='flex flex-col justify-center item-center rounded-lg p-5 my-20'>
-        
-        
-          <Webcam 
-      mirrored={true}/>
+  return (
+    <div className='p-6 max-w-2xl mx-auto bg-white shadow-lg rounded-lg'>
+      <div className='mb-6'>
+        <div className='mb-2'>
+          <Label htmlFor="userAnswer">Your Answer</Label>
+        </div>
+        <Textarea
+          placeholder="Edit or re-write your answer"
+          id="userAnswer"
+          value={userAnswer}
+          onChange={(e) => setUserAnswer(e.target.value)}
+          rows={6}
+          className='border-gray-300'
+        />
+      </div>
 
-    </div>
-      <div> 
-      <div className="grid w-full gap-1.5">
-      <Label htmlFor="userAnswer">Your Answer</Label>
-      <Textarea placeholder="Edit Or Re-Write your Answer" id="userAnswer" onChange={(e)=>{setUserAnswer(e.target.value)}} />
-    </div>
-     </div>
-        <Button 
-      //disabled={loading}
-        variant="outline" className='my-10 bg-indigo-700'  onClick={StartStopRecording}  >
-    
-        {isRecording?
-       <h2 className='text-red-600 flex gap-2'>
-       <Mic /> Stop Recording.....
-       </h2>
+      <div className='flex gap-4 mb-6'>
+        <Button
+          variant="outline"
+          className={`w-full ${isRecording ? 'bg-red-600 text-white' : 'bg-indigo-700 text-white'}`}
+          onClick={startStopRecording}
+          disabled={loading}
+        >
+          {isRecording ? (
+            <div className='flex items-center justify-center'>
+              <Mic className='mr-2' />
+              <span>Stop Recording</span>
+            </div>
+          ) : (
+            <div className='flex items-center justify-center'>
+              <Mic className='mr-2' />
+              <span>Record Answer</span>
+            </div>
+          )}
+        </Button>
 
-        :
-         'Record Answer' }
-         </Button>
-      <Button onClick={UpadateUserAnswer}>  Save Answer </Button>
-      
+        <Button
+          onClick={updateUserAnswer}
+          className='w-full bg-green-600 text-white'
+          disabled={loading}
+        >
+          {loading ? 'Saving...' : `Save Answer for Question #${activeQuestionIndex + 1}`}
+        </Button>
+      </div>
+
+      {error && (
+        <div className='text-red-600 text-center'>
+          <XCircle className='inline mr-2' />
+          {error}
+        </div>
+      )}
     </div>
-  
-        
-)
+  );
 }
 
-export default RecordAnswerSection
+export default RecordAnswerSection;

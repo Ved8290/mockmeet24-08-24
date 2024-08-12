@@ -4,7 +4,8 @@ import React, { useEffect, useState } from 'react';
 import { db } from '../../../utils/db';
 import { aiInterview } from '../../../utils/schema';
 import ICard from "./ICard";
-import { desc } from 'drizzle-orm'; // Assuming `eq` is not needed here
+import { desc } from 'drizzle-orm';
+
  
 function InterviewList() {
   const { user } = useUser();
