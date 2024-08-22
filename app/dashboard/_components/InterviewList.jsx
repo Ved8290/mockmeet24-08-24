@@ -25,10 +25,10 @@ function InterviewList() {
         .where(aiInterview.userEmail, '=', user?.primaryEmailAddress)
         .orderBy(desc(aiInterview.id));
 
-      console.log(result);
+      
       setInterviewList(result);
     } catch (error) {
-      console.error('Error fetching interview list:',error);
+     
     }
   };
 

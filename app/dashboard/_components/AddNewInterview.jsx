@@ -38,7 +38,7 @@ function AddNewInterview() {
 
       Provide the output in JSON format only. Do not include any text outside the JSON.
     `;
-    console.log(inputPrompt);
+  
 
     try {
       const result = await chatSession.sendMessage(inputPrompt);
@@ -62,10 +62,10 @@ function AddNewInterview() {
           router.push('/dashboard/interview/' + resp[0]?.mockId);
         }
       } else {
-        console.log("Error: No response from AI.");
+        
       }
     } catch (error) {
-      console.error("Error fetching response:", error);
+      
     } finally {
       setLoading(false);
     }

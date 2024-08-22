@@ -2,13 +2,15 @@ import Link from "next/link";
 import LandingPage from "../app/dashboard/_components/Home";
 import Header from './dashboard/_components/Header'
 
+
 //import Image from "next/image";
 export default function Home() {
   return (
    <div>
-    {/*   <Header /> */}
+      <Header /> 
 
     <LandingPage/>
+   
 
  {/*
  
