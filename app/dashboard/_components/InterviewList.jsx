@@ -6,7 +6,6 @@ import { aiInterview } from '../../../utils/schema';
 import ICard from "./ICard";
 import { desc } from 'drizzle-orm';
 
- 
 function InterviewList() {
   const { user } = useUser();
   const [interviewList, setInterviewList] = useState([]);
@@ -19,13 +18,14 @@ function InterviewList() {
 
   const GetInterviewList = async () => {
     try {
+      if (!user || !user.primaryEmailAddress) return;
+
       const result = await db
         .select()
         .from(aiInterview)
-        .where(aiInterview.userEmail, '=', user?.primaryEmailAddress)
+        .where(aiInterview.createdBy.equals(user.primaryEmailAddress))  
         .orderBy(desc(aiInterview.id));
 
-      
       setInterviewList(result);
     } catch (error) {
      
@@ -35,13 +35,11 @@ function InterviewList() {
   return (
     <div>
       <h2 className='font-medium text-2xl'>Previous Mock Interviews :</h2>
-     <div className='grid grid-cols-1 md:grid-cols-2 lg: grid-cols-3'>
-     {interviewList&&interviewList.map((interview,  index)=> (
-        <ICard interview={interview} key={index} />
-        
-      ))}
-
-     </div>
+      <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
+        {interviewList && interviewList.map((interview, index) => (
+          <ICard interview={interview} key={index} />
+        ))}
+      </div>
     </div>
   );
 }

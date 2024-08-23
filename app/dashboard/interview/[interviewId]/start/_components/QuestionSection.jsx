@@ -49,8 +49,7 @@ function QuestionSection({ mockInterviewQuestion = {}, activeQuestionIndex = 0 ,
   // Handle end of interview
   const handleEndInterview = () => {
     alert('The interview has ended.');
-
-    window.location(`dashboard/interview/${mockID}/feedback`);
+    window.location.href = `/dashboard/interview/${mockID}/feedback`;
   };
 
   return (
