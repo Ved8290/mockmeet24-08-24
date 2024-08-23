@@ -82,47 +82,48 @@ function LandingPage() {
       </section>
 
       {/* What We Do Section */}
-      <section className="flex items-center justify-center min-h-screen bg-gradient-to-r from-purple-600 via-blue-500 to-indigo-700 text-white">
-        <div className="max-w-3xl p-10 bg-opacity-80 bg-gray-800 rounded-3xl shadow-2xl">
-          <h2 className="text-5xl font-extrabold mb-8 text-center animate-slide-in-bottom">
+      <section className="flex items-center justify-center h-screen bg-gradient-to-r from-purple-600 via-blue-500 to-indigo-700 text-white p-0 m-0">
+    <div className="max-w-3xl p-8 bg-opacity-80 bg-gray-800 rounded-3xl shadow-2xl">
+        <h2 className="text-5xl font-extrabold mb-6 text-center animate-slide-in-bottom">
             What We Do
-          </h2>
-          <ul className="space-y-6">
+        </h2>
+        <ul className="space-y-5">
             <li className="flex items-start animate-fade-in delay-500">
-              <div className="flex-shrink-0 w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-lg font-bold text-white">
-                1
-              </div>
-              <p className="ml-4 text-lg">
-                <strong className="text-blue-400">AI with Attitude:</strong> Get hit with smart, unpredictable questions based on your job role—no two interviews are ever the same.
-              </p>
+                <div className="flex-shrink-0 w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-lg font-bold text-white">
+                    1
+                </div>
+                <p className="ml-4 text-lg">
+                    <strong className="text-blue-400">AI with Attitude:</strong> Get hit with smart, unpredictable questions based on your job role—no two interviews are ever the same.
+                </p>
             </li>
             <li className="flex items-start animate-fade-in delay-1000">
-              <div className="flex-shrink-0 w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-lg font-bold text-white">
-                2
-              </div>
-              <p className="ml-4 text-lg">
-                <strong className="text-blue-400">Human Touch:</strong> Our expert partners feed us the inside scoop on what’s trending in interviews—because AI is smart, but humans know best.
-              </p>
+                <div className="flex-shrink-0 w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-lg font-bold text-white">
+                    2
+                </div>
+                <p className="ml-4 text-lg">
+                    <strong className="text-blue-400">Human Touch:</strong> Our expert partners feed us the inside scoop on what’s trending in interviews—because AI is smart, but humans know best.
+                </p>
             </li>
             <li className="flex items-start animate-fade-in delay-1500">
-              <div className="flex-shrink-0 w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-lg font-bold text-white">
-                3
-              </div>
-              <p className="ml-4 text-lg">
-                <strong className="text-blue-400">Brutally Honest Feedback:</strong> We don’t sugarcoat it—you’ll get straight talk on where you shine and where you need a little more polish.
-              </p>
+                <div className="flex-shrink-0 w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-lg font-bold text-white">
+                    3
+                </div>
+                <p className="ml-4 text-lg">
+                    <strong className="text-blue-400">Brutally Honest Feedback:</strong> We don’t sugarcoat it—you’ll get straight talk on where you shine and where you need a little more polish.
+                </p>
             </li>
             <li className="flex items-start animate-fade-in delay-2000">
-              <div className="flex-shrink-0 w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-lg font-bold text-white">
-                4
-              </div>
-              <p className="ml-4 text-lg">
-                <strong className="text-blue-400">Tailored Packages:</strong> From "I need a quick practice" to "Bring it on, I’m going all in," we’ve got plans to suit your hustle.
-              </p>
+                <div className="flex-shrink-0 w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-lg font-bold text-white">
+                    4
+                </div>
+                <p className="ml-4 text-lg">
+                    <strong className="text-blue-400">Tailored Packages:</strong> From "I need a quick practice" to "Bring it on, I’m going all in," we’ve got plans to suit your hustle.
+                </p>
             </li>
-          </ul>
-        </div>
-      </section>
+        </ul>
+    </div>
+</section>
+
 
       {/* Testimonials Section */}
       <section className="container mx-auto my-16 p-8">
